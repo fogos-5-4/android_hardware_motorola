@@ -11,3 +11,12 @@ allow hal_cameradesktop_server self:netlink_kobject_uevent_socket create_socket_
 
 allow hal_cameradesktop_server vendor_sysfs_graphics:file r_file_perms;
 allow hal_cameradesktop_server video_device:chr_file rw_file_perms;
+
+# Allow the desktop camera (webcam/UVC gadget) HAL to read UVC configfs
+# function attributes (/config/usb_gadget/g1/functions/uvc.0/...) and the
+# video4linux sysfs device name. Without these, UvcConfig::buildDataStruct()
+# reads empty strings and stoul() throws "no conversion", crashing the service
+# and causing webcam mode to fall back to "no data transfer".
+allow hal_cameradesktop_server configfs:dir search;
+allow hal_cameradesktop_server configfs:file r_file_perms;
+allow hal_cameradesktop_server sysfs:file r_file_perms;
